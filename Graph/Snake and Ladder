@@ -1,0 +1,94 @@
+Input: board = [[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1],[-1,35,-1,-1,13,-1],[-1,-1,-1,-1,-1,-1],[-1,15,-1,-1,-1,-1]]
+Output: 4
+Explanation: 
+In the beginning, you start at square 1 (at row 5, column 0).
+You decide to move to square 2 and must take the ladder to square 15.
+You then decide to move to square 17 and must take the snake to square 13.
+You then decide to move to square 14 and must take the ladder to square 35.
+You then decide to move to square 36, ending the game.
+This is the lowest possible number of moves to reach the last square, so return 4.
+
+
+---------------------------------------------------------------------------------------------------
+
+
+struct queueentry{
+    int v;
+    int turn;
+};
+class Solution {
+public:
+    int snakesAndLadders(vector<vector<int>>& board) {
+        int N=(board.size())*(board.size());
+        vector<bool>visited(N,false);
+        vector<int> move(N,-1);
+        bool lefttoright=true;
+        int index=0;
+        for (int i=board.size()-1;i>=0;i--)
+        {
+            if(lefttoright)
+            {
+                for (int j=0;j<board.size();j++)
+                {
+                    if(board[i][j]!=-1)
+                    {
+                        move[index]=board[i][j]-1;
+                    }
+                    index++;
+                }
+                lefttoright=false;
+            }
+            else
+            {
+                for (int j=board.size()-1;j>=0;j--)
+                {
+                    if(board[i][j]!=-1)
+                    {
+                        move[index]=board[i][j]-1;
+                    }
+                    index++;
+                }
+                lefttoright=true;
+            }
+        }
+
+        int j,k=1;
+        queue<queueentry>q;
+        queueentry s;
+        s.v=0;s.turn=0;
+        q.push(s);
+        visited[0]=true;
+        queueentry qe;
+        int t;
+        while(!q.empty())
+        {
+            qe=q.front();
+            q.pop();
+            t=qe.v;
+            if(t==N-1)
+                break;
+            for (int i=t+1;i<=t+6 and i<N;i++)
+            {
+                if(!visited[i])
+                {
+                    queueentry a;
+                    a.turn=qe.turn+1;
+                    visited[i]=true;
+                    
+                    if(move[i]!=-1)
+                    {
+                        a.v=move[i];
+                    }
+                    else
+                    {
+                        a.v=i;
+                    }
+                    q.push(a);
+                }
+            }
+        }
+        if(t!=N-1)
+        return -1;
+        return qe.turn;
+    }
+};
