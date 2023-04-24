@@ -1,0 +1,74 @@
+Input: grid = {{0,1,2},{0,1,2},{2,1,1}}
+Output: 1
+Explanation: The grid is-
+0 1 2
+0 1 2
+2 1 1
+Oranges at positions (0,2), (1,2), (2,0)
+will rot oranges at (0,1), (1,1), (2,2) and 
+(2,1) in unit time.
+
+
+----------------------------------------------------------------------------------------------------
+
+
+
+class Solution 
+{
+    public:
+    //Function to find minimum time required to rot all oranges. 
+    int orangesRotting(vector<vector<int>>& grid) {
+        // Code here
+        int n=grid.size();
+        int m=grid[0].size();
+        
+        int vis[n][m];
+        int cntfresh=0;
+        queue <pair<pair<int,int>,int>> p;
+        for (int i=0;i<n;i++)
+        {
+            for (int j=0;j<m;j++)
+            {
+                if(grid[i][j]==2)
+                {
+                    vis[i][j]=2;
+                    p.push({{i,j},0});
+                }
+                else
+                    vis[i][j]=0;
+                    
+                if(grid[i][j]==1)
+                {
+                    cntfresh++;
+                }
+            }
+        }
+        int drow[]={-1,0,1,0};
+        int dcol[]={0,1,0,-1};
+        int cnt=0,tm=0;
+        while(!p.empty())
+        {
+            int r=p.front().first.first;
+            int c=p.front().first.second;
+            int t=p.front().second;
+            p.pop();
+            tm=max(tm,t);
+            for (int i=0;i<4;i++)
+            {
+                int nrow=drow[i]+r;
+                int ncol=dcol[i]+c;
+                
+                if(nrow>=0 and nrow<n and ncol>=0 and ncol<m and vis[nrow][ncol]==0 and 
+                grid[nrow][ncol]==1)
+                {
+                    p.push({{nrow,ncol},t+1});
+                    vis[nrow][ncol]=2;
+                    cnt++;
+                }
+            }
+        }
+        if(cnt!=cntfresh) return -1;
+        else 
+        return tm;
+    }
+};
